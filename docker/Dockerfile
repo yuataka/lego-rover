@@ -1,19 +1,25 @@
-FROM ubuntu:20.04
-
-ARG USERNAME=user-name-goes-here
+FROM ros:noetic
+ENV DEBIAN_FRONTEND=noninteractive
+ARG USERNAME=rosnoetic
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
 
 # Install dependencies
 RUN apt-get update && \
-    sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y curl gnupg lsb-release && \
-    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ros-noetic-desktop && \
-    apt-get install -y python3-colcon-common-extensions && \
-    apt-get clean && \
+     apt-get install -y curl gnupg lsb-release tzdata && \
     rm -rf /var/lib/apt/lists/*
+
+#RUN  sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
+#    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -  
+#RUN  apt-get update && \
+#    apt-get install -y ros-noetic-desktop && \
+#    rm -rf /var/lib/apt/lists/*
+#
+#RUN  apt-get update && \
+#    apt-get install -y python3-colcon-common-extensions && \
+#    rm -rf /var/lib/apt/lists/*
 
 # Create the user
 RUN groupadd --gid $USER_GID $USERNAME \
